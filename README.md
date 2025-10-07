@@ -2,98 +2,123 @@
 
 ## Objective
 
-Create a URL shortening service that provides a simple REST API for converting long URLs into short, manageable links. This assessment will evaluate your ability to work with C programming, web frameworks, and file I/O operations.
+LinkShortener is a URL shortening service implemented in C, providing a REST API to convert long URLs into short, manageable links. This project demonstrates proficiency in C programming, file I/O operations, and web framework usage, specifically with CWebStudio and doTheWorld libraries.
 
-## Project Requirements
+## Functionalities
 
-You are required to implement a URL shortener application with the following specifications:
+- **POST /shorten**: Accepts a long URL via JSON and returns a shortened URL with a unique `shortId`.
+- **GET /:shortId**: Redirects the user to the original URL associated with the provided `shortId`.
 
-### API Endpoints
+## Technical Requirements
 
-#### 1. POST `/shorten`
-- **Purpose**: Accept a long URL and return a shortened version
-- **Request**: JSON payload containing the original URL
-- **Response**: JSON containing the shortened URL and short ID
+- **Language**: C
+- **Web Framework**: [CWebStudio](https://github.com/OUIsolutions/CWebStudio) for handling HTTP requests and responses
+- **I/O Library**: [doTheWorld](https://github.com/OUIsolutions/DoTheWorld) for file and directory operations
 
-**Example Request:**
-```json
+## Storage Structure
+
+Shortened URLs are stored in the `./database/` directory, where:
+
+- **Filename**: A 6-character alphanumeric `shortId` (e.g., `abc123`)
+- **File Content**: The original long URL in plain text
+
+Example:
+```
+./database/
+├── abc123
+├── dEf456
+└── GhI789
+```
+
+## Build and Execution
+
+### Prerequisites
+- GCC compiler
+- CWebStudio and doTheWorld libraries (included as `CWebStudioOne.c` and `doTheWorldOne.c`)
+
+### Build
+Use the provided `Makefile` to compile:
+
+`make`
+
+This generates the `linkshortener` executable.
+## Execution
+Run the server:
+```./linkshortener```
+
+The server starts on http://localhost:8080.
+
+# API Endpoints
+### 1. POST /shorten
+
+### Purpose: Converts a long URL into a shortened URL
+- Request: JSON payload with the original URL
+```bash
 {
   "url": "https://www.example.com/some/very/long/url"
 }
 ```
-
-**Expected Response:**
-```json
-{
+- Response (201 Created):
+```bash
+{   
   "shortUrl": "http://localhost:8080/abc123",
   "shortId": "abc123"
 }
 ```
+### Validations:
+- URL must start with http:// or https://
+- Maximum URL length: 4095 characters
+- shortId is a 6-character alphanumeric string generated randomly
+- Up to 8 attempts to generate a unique shortId to avoid collisions
 
-#### 2. GET `/:shortId`
-- **Purpose**: Redirect users to the original long URL
-- **Parameters**: `shortId` - the unique identifier for the shortened URL
-- **Response**: HTTP redirect (301 or 302) to the original URL
+### 2. GET /:shortId
 
-### Technical Requirements
+- Purpose: Redirects to the original URL
+- Parameters: shortId (e.g., abc123)
+- Response: HTTP 302 redirect with Location header set to the original URL
 
-#### Mandatory Technologies
+### Example:
 
-- **[CWebStudio](https://github.com/OUIsolutions/CWebStudio)**: Web framework for building the REST API in C
-- **[doTheWorld](https://github.com/OUIsolutions/DoTheWorld)**: Library for handling I/O operations (file creation, directory management, etc.)
-
-#### Storage Implementation
-
-You must implement a **file-based storage system** with the following structure:
-
+```bash
+curl -v http://localhost:8080/abc123
 ```
-./database/
-├── 52654
-├── 23232
-├── 65454
-└── [shortId]
+- Response: Redirects to https://www.example.com/some/very/long/url
+
+# Testing
+
+Create a short URL:
+```bash
+curl -X POST http://localhost:8080/shorten \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.google.com"}'
+```
+Expected response:
+```bash
+{
+  "shortUrl": "http://localhost:8080/cQaaE2",
+  "shortId": "cQaaE2"
+}
 ```
 
-**Requirements:**
-- Each shortened URL must be stored in a separate file
-- The filename must be the `shortId`
-- File content must contain only the original long URL as plain text
+## Automated Test Script
 
-**Example:**
-- **File**: `./database/abc123`
-- **Content**: `https://www.example.com/some/very/long/url`
+Change the URL in `url_shortener_test.sh` or 
 
-## Assessment Criteria
+Run `url_shortener_test.sh` (requires jq for JSON parsing):
+```bash
+chmod +x url_shortener_test.sh
+```
+```bash 
+./url_shortener_test.sh
+```
 
-Your solution will be evaluated based on:
+# Getting Started
 
-1. **Functionality**: Both endpoints work correctly
-2. **Code Quality**: Clean, readable, and well-structured C code
-3. **Error Handling**: Proper handling of edge cases and invalid inputs
-4. **File Management**: Correct implementation of the specified storage structure
-5. **API Design**: Proper HTTP status codes and response formats
-6. **Documentation**: Clear code comments and basic usage instructions
+- Clone the repository or copy the source files.
+- Ensure CWebStudioOne.c and doTheWorldOne.c are in the project directory.
+- Run make to compile.
+- Execute ./linkshortener to start the server.
+- Test using curl or the provided test script.
 
-## Deliverables
-
-1. Complete source code implementation
-2. Build instructions (Makefile or compilation commands)
-3. Basic documentation on how to run and test the application
-4. Example usage demonstrating both endpoints
-
-## Getting Started
-
-1. Set up your development environment with the required libraries
-2. Initialize the project structure
-3. Implement the API endpoints according to specifications
-4. Test your implementation thoroughly
-5. Document your solution
-
-## Notes
-
-- Focus on implementing a working solution first, then optimize
-- Ensure your code handles concurrent requests appropriately
-- Consider URL validation and error scenarios
-- The short ID generation algorithm is up to your discretion
-
-Good luck with your implementation!
+# Author
+Alef Cauan 

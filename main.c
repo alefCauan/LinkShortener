@@ -134,12 +134,10 @@ static char *load_mapping(const char *shortId)
     }
 #endif
 
-    // Fallback to standard C file reading
     FILE *f = fopen(path, "r");
     if (!f) 
         return NULL;
 
-    // Determine file size
     if (fseek(f, 0, SEEK_END) != 0) 
     {
         fclose(f);
@@ -149,13 +147,12 @@ static char *load_mapping(const char *shortId)
     long sz = ftell(f);
     rewind(f);
 
-    if (sz <= 0) // Treat 0-sized files as errors/empty
+    if (sz <= 0) 
     {
         fclose(f);
         return NULL;
     }
 
-    // Allocate buffer and read content
     char *buf = malloc((size_t)sz + 1);
     if (!buf) 
     {
@@ -190,7 +187,7 @@ CwebHttpResponse *shorten_handler(CwebHttpRequest *request)
 
     // --- Start of robust JSON parsing using cJSON ---
     cJSON *json = cJSON_Parse((char *)request_body);
-    free(request_body); // Free the raw request body immediately after parsing it
+    free(request_body); 
 
     if (!json)
     {
@@ -225,7 +222,6 @@ CwebHttpResponse *shorten_handler(CwebHttpRequest *request)
     longUrl[sizeof(longUrl) - 1] = '\0'; 
 
     cJSON_Delete(json); // Clean up the parsed JSON object
-    // --- End of robust JSON parsing using cJSON ---
 
     if (!is_valid_url(longUrl)) 
     {
@@ -246,10 +242,11 @@ CwebHttpResponse *shorten_handler(CwebHttpRequest *request)
         snprintf(path, sizeof(path), "%s/%s", DATABASE_DIR, shortId);
         
         FILE *f = fopen(path, "r");
-        if (f) { 
+        if (f) 
+        { 
             fclose(f); 
             attempts++; 
-            continue; // ID is already taken
+            continue; 
         } 
 
         stored = store_mapping(shortId, longUrl);
