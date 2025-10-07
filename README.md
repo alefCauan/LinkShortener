@@ -39,7 +39,9 @@ Example:
 ### Build
 Use the provided `Makefile` to compile:
 
-`make`
+```bash
+make
+```
 
 This generates the `linkshortener` executable.
 ## Execution
@@ -102,9 +104,9 @@ Expected response:
 
 ## Automated Test Script
 
-Change the URL in `url_shortener_test.sh` or 
+Change the URL in `url_shortener_test.sh` or just
 
-Run `url_shortener_test.sh` (requires jq for JSON parsing):
+Run `url_shortener_test.sh`:
 ```bash
 chmod +x url_shortener_test.sh
 ```
